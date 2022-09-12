@@ -2,12 +2,17 @@
 
 namespace App\UseCase\Flight;
 
+use App\UseCase\ClassType;
 use App\UseCase\Percentage;
 
 class CalculatePrice implements ICalculatePrice
 {
     use Percentage;
 
+    /**
+     * @param ICalculateFirstClass $calculateFirstClass
+     * @param IDiscount $discount
+     */
     public function __construct(
         private readonly ICalculateFirstClass $calculateFirstClass,
         private readonly IDiscount $discount
@@ -15,20 +20,16 @@ class CalculatePrice implements ICalculatePrice
     {
     }
 
-    public function apply(int $people, float $price, $checkIn, $checkOut, string $type, bool $scale, bool $isUnit): float
-    {
-        return $this->calculatePerDay($people, $price, $checkIn, $checkOut, $type, $scale, $isUnit);
-    }
-
-    private function calculatePerDay(
-        int $people,
-        float $price,
-        $checkIn,
-        $checkOut,
-        string $type,
-        bool $scale,
-        bool $isUnit
-    ): float|int
+    /**
+     * @inheritDoc
+     */
+    public function apply(int    $people,
+                          float  $price,
+                                 $checkIn,
+                                 $checkOut,
+                          ClassType $type,
+                          bool   $scale,
+                          bool   $isUnit): string
     {
         $day = $checkIn->diffInDays($checkOut);
         $calculatePrice = $price;
@@ -40,7 +41,7 @@ class CalculatePrice implements ICalculatePrice
 
         $calculatePrice = $isUnit ? $calculatePrice : $people * $calculatePrice;
 
-        return $type === "economic"
+        return ClassType::ECONOMIC === $type
             ? $this->discount->apply($scale, $calculatePrice)
             : $this->calculateFirstClass->apply($type, $calculatePrice);
     }

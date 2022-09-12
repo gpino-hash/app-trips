@@ -2,13 +2,19 @@
 
 namespace App\Http\Resources;
 
-use App\UseCase\Flight\ICalculatePrice;
+use App\UseCase\ClassType;
+use App\UseCase\TypeFlight;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class Direct extends AbstractFlight
 {
 
+    /**
+     * @param Collection $items
+     * @param $request
+     * @return array
+     */
     public function build(Collection $items, $request): array
     {
         $price = [];
@@ -26,12 +32,17 @@ class Direct extends AbstractFlight
                 min($price),
                 $checkIn,
                 $checkOut,
-                $request->input("type"),
+                ClassType::from($request->input("type")),
                 false,
                 false
             ),
-            "type" => "Non-stop flight",
-            "flights" => $this->flights($items, $people, $checkIn, $request->input("type"), false, true)
+            "type" => TypeFlight::UNSCALED,
+            "flights" => $this->flights($items,
+                $people,
+                $checkIn,
+                ClassType::from($request->input("type")),
+                false,
+                true)
         ];
     }
 }

@@ -2,14 +2,20 @@
 
 namespace App\UseCase\Flight;
 
+use App\UseCase\ClassType;
 use App\UseCase\Percentage;
 
 class CalculateFirstClass implements ICalculateFirstClass
 {
     use Percentage;
 
-    public function apply(string $type, float $price): float
+    /**
+     * @inheritDoc
+     */
+    public function apply(ClassType $type, float $price): string
     {
-        return $type === "economic" ? $price : $price + $this->getPercentage($price, self::FIRST_CLASS);
+        return number_format(ClassType::ECONOMIC === $type
+            ? $price
+            : $price + $this->getPercentage($price, self::FIRST_CLASS), 2);
     }
 }

@@ -11,13 +11,15 @@ use Illuminate\Support\Collection;
 class Scale implements IScale
 {
 
+    /**
+     * @param IDistance $distance
+     */
     public function __construct(private readonly IDistance $distance)
     {
     }
 
     /**
-     * @param FlightDTO $dto
-     * @return array
+     * @inheritDoc
      */
     public function filter(FlightDTO $dto): array
     {

@@ -8,7 +8,7 @@ class Discount implements IDiscount
 {
     use Percentage;
 
-    public function apply(bool $hasScale, float $price): float
+    public function apply(bool $hasScale, float $price): string
     {
         return number_format($hasScale
             ? $price - $this->getPercentage($price, self::DISCOUNT)

@@ -2,11 +2,18 @@
 
 namespace App\Http\Resources;
 
+use App\UseCase\ClassType;
+use App\UseCase\TypeFlight;
 use Carbon\Carbon;
 
 class FlightScale extends AbstractFlight
 {
 
+    /**
+     * @param array $flights
+     * @param $request
+     * @return array
+     */
     public function build(array $flights, $request): array
     {
         $people = $request->input("occupants");
@@ -27,15 +34,24 @@ class FlightScale extends AbstractFlight
                 min($this->sumPricePerScale($items)),
                 $checkIn,
                 $checkOut,
-                $request->input("type"),
+                ClassType::from($request->input("type")),
                 true,
                 false
             ),
-            "type" => "Stopover flight",
-            "flights" => $this->flights($items, $people, $checkIn, $request->input("type"), true, true)
+            "type" => TypeFlight::WITH_SCALE,
+            "flights" => $this->flights($items,
+                $people,
+                $checkIn,
+                ClassType::from($request->input("type")),
+                true,
+                true)
         ];
     }
 
+    /**
+     * @param array $flights
+     * @return array
+     */
     private function sumPricePerScale(array $flights): array
     {
         $priceTotal = [];

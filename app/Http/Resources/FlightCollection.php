@@ -12,6 +12,9 @@ class FlightCollection extends ResourceCollection
     private Direct $direct;
     private FlightScale $scale;
 
+    /**
+     * @param $resource
+     */
     public function __construct($resource)
     {
         parent::__construct($resource);

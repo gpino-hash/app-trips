@@ -6,5 +6,5 @@ interface IDiscount
 {
     const DISCOUNT = 40;
 
-    public function apply(bool $hasScale, float $price): float;
+    public function apply(bool $hasScale, float $price): string;
 }
