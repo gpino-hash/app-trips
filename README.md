@@ -1,64 +1,141 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# App Viajes
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+BraintlyViajes es un microservicio dedicado a gestionar la disponibilidad de viajes de distintas aerolíneas a distintos destinos.
 
-## About Laravel
+Su principal propósito es servir una API que, dadas las necesidades del usuario, indique cuáles son los vuelos disponibles entre dos puntos.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Consigna
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Se le pide al desarrollador implementar los siguientes métodos:
+1. Un endpoint que le recomiende al usuario 10 vuelos distintos que mejor se ajusten a su necesidad. El usuario enviará la siguiente información:
+```javascript
+{
+  "occupants": "numeric",
+  "departure_airport": "string" // (IATA code),
+  "arrival_airport": "string" // (IATA code),
+  "check_in": "date" // (yyy-mm-dd), 
+  "check_out": "date" // (yyy-mm-dd), 
+  "type": "economic|firstclass",
+}
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+El sistema debe recomendarle 5 vuelos de ida y 5 de vuelta que sean cerca de las fechas indicadas, ordenados por precio.
 
-## Learning Laravel
+Se deben mostrar 3 opciones con vuelo directo y 2 opciones con escala (en caso de que el vuelo admita escala).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Ejemplo de response:
+```javascript
+{
+  "occupants": 2,
+  "departure_airport": "EZE",
+  "arrival_airport": "NYC",
+  "check_in": 2020-12-14, 
+  "check_out": 2020-12-18, 
+  "type": "economic",
+}
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Ejemplo de response:
+```javascript
+{
+  "data": {
+    "departures": [
+      {
+        "total_price": 4000,
+        "type": "Non-stop flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-003",
+            "departure_airport": "EZE",
+            "arrival_airport": "NYC",
+            "departure_date": "2020-12-14 14:00:00",
+            "arrival_date": "2020-12-14 23:00:00",
+            "price": 4000,
+            "type": "economic"
+          }
+        ], 
+      },
+      {
+        "total_price": 3000,
+        "type": "Stopover flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-004",
+            "departure_airport": "EZE",
+            "arrival_airport": "SCL",
+            "departure_date": "2020-12-13 12:00:00",
+            "arrival_date": "2020-12-13 17:00:00",
+            "price": 1200,
+            "type": "economic"
+          },
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-005",
+            "departure_airport": "SCL",
+            "arrival_airport": "NYC",
+            "departure_date": "2020-12-13 20:00:00",
+            "arrival_date": "2020-12-14 04:00:00",
+            "price": 3800,
+            "type": "economic"
+          }
+        ],
+      }
+    ],
+    "returns": [
+      {
+        "total_price": 3800,
+        "type": "Non-stop flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-008",
+            "departure_airport": "NYC",
+            "arrival_airport": "EZE",
+            "departure_date": "2020-12-18 02:00:00",
+            "arrival_date": "2020-12-18 10:00:00",
+            "price": 3800,
+            "type": "economic"
+          }
+        ], 
+      },
+      {
+        "total_price": 2820,
+        "type": "Stopover flight",
+        "flights": [
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-0012",
+            "departure_airport": "NYC",
+            "arrival_airport": "SCL",
+            "departure_date": "2020-12-18 05:00:00",
+            "arrival_date": "2020-12-18 17:00:00",
+            "price": 1200,
+            "type": "economic"
+          },
+          {
+            "airline": "LIONAIR",
+            "flight_number": "LNR-0013",
+            "departure_airport": "SCL",
+            "arrival_airport": "EZE",
+            "departure_date": "2020-12-18 19:00:00",
+            "arrival_date": "2020-12-18 22:00:00",
+            "price": 3500,
+            "type": "economic"
+          }
+        ],
+      }
+    ]
+  }
+}
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+#### Consideraciones
+* Solo se aplicarán vuelos con escala si la distancia entre ambos aeropuertos es mayor a 5.000 kilómetros.
+* La distancia total del viaje al añadir una escala no puede ser superior a la distancia de vuelo directo más un 30%.
+* El precio de cada pasaje estará dado por la siguiente fórmula:
+    * Si el vuelo es dentro de las próximas 24 horas, se suma un 35% al precio del pasaje.
+    * Si el vuelo es dentro de los próximos 7 dias, se suma un 20% al preciod el pasaje.
+    * La primera clase cuesta un 40% más que la clase económica para todos los casos.
+    * Todos los vuelos con escala tienen un 40% de descuento en su precio final.
